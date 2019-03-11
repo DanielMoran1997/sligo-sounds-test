@@ -1,0 +1,63 @@
+<!--Sidenav-->
+<mat-drawer-container autosize>
+    <mat-drawer #drawer class="sidenav" mode="side">
+        <h3>Search by Name</h3>
+        <div class="input-group mb-3">
+                <input type="text"  class="form-control" placeholder="Filter by:" aria-label="Filter by:" [(ngModel)]='listFilter' aria-describedby="basic-addon1">
+              </div>
+        <h3>Filter by Genre:</h3>
+        <ul>
+            <li>
+                <label>Rock</label>
+                <input type="checkbox" name="rock" [(ngModel)]="rockCheckBox" data-md-icheck (change)="doFilter('Rock')">
+            </li>
+            <li>
+                <label>Pop</label>
+                <input type="checkbox" name="pop"  [(ngModel)]="popCheckBox" data-md-icheck (change)="doFilter('Pop')">
+            </li>
+            <li>
+                <label>Techno</label>
+                <input type="checkbox" name="techno" [(ngModel)]="technoCheckbox" data-md-icheck (change)="doFilter('Techno')">
+            </li>
+            <li>
+                <label>Trad</label>
+                <input type="checkbox" name="trad" [(ngModel)]="tradCheckbox" data-md-icheck (change)="doFilter('Trad')">
+            </li>
+            <li>
+                <label>Other</label>
+                <input type="checkbox" name="other" [(ngModel)]="otherCheckbox" data-md-icheck (change)="doFilter('Other')">
+            </li>
+        </ul>
+    </mat-drawer>
+    <h1 style="font-size:5.5vw;">Featured Events</h1>
+<button color="black" mat-raised-button (click)="drawer.toggle()">Filter</button>
+
+<!--Main content feed-->
+<div class='card'>
+<div class='card-body'>
+<div *ngIf='events && events.length'>
+<mat-card class="event-card" *ngFor='let event of filteredEvents'>
+<mat-card-header *ngIf="!event.hideMe">
+<div mat-card-avatar class="event-header-image"></div>
+<mat-card-title><strong>{{event.name}}</strong></mat-card-title>
+<mat-card-subtitle><strong>Venue:</strong>{{event.venue}} - <strong>Time:</strong>{{event.time}} - <strong>Date:</strong>{{event.date}} - <strong>Genre:</strong>{{event.genre}}</mat-card-subtitle>
+</mat-card-header>
+<img *ngIf="!event.hideMe" mat-card-image src="{{event.image}}">
+<mat-card-content *ngIf="!event.hideMe">
+<p>
+{{event.description}}
+</p>
+</mat-card-content>
+<div>
+ {{attendees}}
+</div>
+<mat-card-actions *ngIf="!event.hideMe">
+<button (click)="attend(); clicked = true;" [disabled]="clicked"  mat-button style="color: #90ee90">ATTEND</button>
+<button (click)="event.hideMe = !event.hideMe" mat-button style="color:#ff0000">IGNORE</button>
+<button (click)="event.show = !event.show" mat-button style="color: #0b6f8d">LOCATION</button>
+</mat-card-actions>
+<iframe *ngIf="event.show" [src]='sanitizer.bypassSecurityTrustResourceUrl(event.map)' height="400px" width="500px"></iframe>
+</mat-card>
+</div>
+</div>
+<hr>

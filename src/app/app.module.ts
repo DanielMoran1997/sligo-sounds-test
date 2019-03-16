@@ -4,7 +4,7 @@ import { NgModule } from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {HttpModule} from '@angular/http';
 import {HttpClientModule} from '@angular/common/http';
-import {MatDrawer, MatListModule, MatCardModule, MatInputModule, MatToolbarModule, MatExpansionModule, MatButtonModule, MatListSubheaderCssMatStyler, MatProgressSpinnerModule, MatMenuModule, MatSelect, MatSelectModule, MatFormFieldModule, MatCheckboxModule, MatSidenavModule, } from '@angular/material';
+import {MatDrawer, MatIconModule, MatListModule, MatCardModule, MatInputModule, MatToolbarModule, MatExpansionModule, MatButtonModule, MatListSubheaderCssMatStyler, MatProgressSpinnerModule, MatMenuModule, MatSelect, MatSelectModule, MatFormFieldModule, MatCheckboxModule, MatSidenavModule, MatTabsModule } from '@angular/material';
 
 import {FlexLayoutModule} from '@angular/flex-layout';
 import { NotificationService } from './services/notification.service';
@@ -17,7 +17,7 @@ import {AngularFirestoreModule} from '@angular/fire/firestore';
 import {RouterModule, Routes} from '@angular/router';
 import {AngularFireDatabaseModule} from "@angular/fire/database"
 import { MDBBootstrapModule } from 'angular-bootstrap-md';
-import { NavbarModule, WavesModule, ButtonsModule, DropdownModule } from 'angular-bootstrap-md'
+import { NavbarModule, WavesModule, ButtonsModule, DropdownModule } from 'angular-bootstrap-md';
 
 
 import { AppComponent } from './app.component';
@@ -32,6 +32,8 @@ import { EventListComponent } from './event-list/event-list.component';
 import { UserProfileComponent } from './user-profile/user-profile.component';
 import { UserService } from './services/user.service';
 import { VenueProfileComponent } from './venue-profile/venue-profile.component';
+import { SidenavListComponent } from './sidenav-list/sidenav-list.component';
+import { DeleteEventComponent } from './delete-event/delete-event.component';
 
 const routes: Routes = [
   {path: '', redirectTo: 'login', pathMatch: 'full', canActivate: [AuthGuard]},
@@ -40,7 +42,7 @@ const routes: Routes = [
   {path: 'venueSignUp', component: VenueSignUpComponent, },
   {path: 'profile', component: UserProfileComponent, },
   {path: 'venue-profile', component: VenueProfileComponent, },
-  {path: 'add-event', component: AddEventComponent},
+  {path: 'add-event', component: AddEventComponent, },
   {path: 'home', component: EventListComponent, canActivate: [AuthGuard]},
   {path: '**', redirectTo: 'login', canActivate: [AuthGuard]},
 
@@ -56,7 +58,9 @@ const routes: Routes = [
     AddEventComponent,
     EventListComponent,
     UserProfileComponent,
-    VenueProfileComponent
+    VenueProfileComponent,
+    SidenavListComponent,
+    DeleteEventComponent
   ],
   imports: [
     BrowserModule,
@@ -90,7 +94,13 @@ const routes: Routes = [
     MatCardModule,
     FlexLayoutModule,
     MatInputModule,
-    MatListModule
+    MatListModule,
+    MatSidenavModule,
+    MatIconModule,
+  ],
+  exports: [
+    MatTabsModule,
+    MatSidenavModule
   ],
   providers: [AuthService, AuthGuard,NotificationService, AdminGuard, UserService],
   bootstrap: [AppComponent]

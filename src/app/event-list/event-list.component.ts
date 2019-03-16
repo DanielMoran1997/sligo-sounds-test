@@ -1,13 +1,13 @@
-import { Component, OnInit, Sanitizer, Input } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { IEvent } from './event';
 import { EventsService } from '../services/events.service';
 import { Observable } from 'rxjs';
 import { single } from 'rxjs/operators';
 import {Router} from '@Angular/router';
+import { AngularFirestore } from '@angular/fire/firestore';
+import * as firebase from 'firebase';
 import { DomSanitizer }  from '@angular/platform-browser';
-import { votes } from './votes.model';
-
-
+import { votes } from '../models/votes.model';
 
 
 @Component({
@@ -19,8 +19,7 @@ export class EventListComponent implements OnInit {
   clicked = false;
   attendees: number;
   votes: votes[];
-
-
+  dipslay: boolean;
 
   pageTitle: string = "Sligo Sounds";
   errorMessage: string;
@@ -32,6 +31,10 @@ export class EventListComponent implements OnInit {
   tradCheckbox = false;
   otherCheckbox = false;
   selectedGenres: string[] = [];
+  attendedEvents: string[] = [];
+  trustedUrl: any;
+  dangerousUrl: any;
+  id: string
 
   _listFilter: string;
   get listFilter(): string{
@@ -48,22 +51,9 @@ export class EventListComponent implements OnInit {
     filterBy = filterBy.toLocaleLowerCase();
     return this.events.filter((event: IEvent ) => event.name.toLocaleLowerCase().indexOf(filterBy) != -1);
 }
-  
-  constructor(public sanitizer: DomSanitizer, private _eventsService: EventsService) {
-    this.attendees = 0;
+
+  constructor(private _eventsService: EventsService, private _afs: AngularFirestore, public sanitizer: DomSanitizer) {
   }
-
- 
-
-  attend(): votes[] {
-    this.attendees += 1;
-    return this.votes;
-  }
-
-  sortedEvents(): votes[] {
-    return this.votes.sort((a: votes, b: votes) => b.attendees - a.attendees)
-  }
-
 
   doFilter(genre: string) {
     let index = this.selectedGenres.indexOf(genre);
@@ -91,6 +81,43 @@ export class EventListComponent implements OnInit {
       this.filteredEvents = this.events;
     },
       error => this.errorMessage = <any>error);
+  }
+  attendEvent(name: string, event: IEvent){
+    var user = firebase.auth().currentUser;
+    this._afs.collection(`users/${user.uid}/events`).add(event);
+
+    let index = this.attendedEvents.indexOf(name);
+    if (index == -1) {
+      this.attendedEvents.push(name);
+    }
+    else if (this.attendedEvents.length === 0) {
+      this.filteredEvents = this.events;
+    }
+    else {
+      this.filteredEvents = [];
+      this.events.forEach(event => {
+        if (this.attendedEvents.includes(event.name)) {
+          this.filteredEvents.push(event)
+        }
+      });
+    }
+
+    console.log(this.attendedEvents);
+    // console.log($event.target);
+  }
+
+  removeAttend(name: string){
+    let index = this.attendedEvents.indexOf(name)
+      if (index == 0) {
+        this.attendedEvents.pop();
+        return name;
+        console.log(name);
+      }
+  }
+
+  mapDisplay(event: IEvent){
+    this.dangerousUrl = `https://www.google.com/maps/embed/v1/place?q=${event.venue}&key=AIzaSyCuUORM_eTox14rFK4K5vPxU9wLhVhXPjg`;
+
   }
 }
 

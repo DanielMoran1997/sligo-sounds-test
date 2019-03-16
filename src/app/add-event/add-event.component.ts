@@ -18,13 +18,14 @@ import { IEvent } from '../event-list/event';
 export class AddEventComponent implements OnInit {
   pageTitle: string = "Sligo Sounds";
 
+  eventId: number;
   eventName: string;
   eventVenue: string;
   eventDate: string;
   eventTime: string;
   eventGenre: string;
   eventDescription: string;
-  eventImage: string;
+  image: string;
 
   constructor(private _eventService: EventsService, private router: Router) { 
    
@@ -35,13 +36,14 @@ export class AddEventComponent implements OnInit {
 
   addEvent(): void {
     let event:IEvent = {
+      eventId:this.eventId,
       name:this.eventName,
       date:this.eventDate,
       venue:this.eventVenue,
       time:this.eventTime,
       genre:this.eventGenre,
       description:this.eventDescription,
-      image:this.eventImage,
+      image:this.image
     };
     this._eventService.addEvent(event);
 

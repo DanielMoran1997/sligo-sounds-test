@@ -1,3 +1,5 @@
+<title>Sligo Sounds - Events</title>
+
 <!--Sidenav-->
 <mat-drawer-container autosize>
     <mat-drawer #drawer class="sidenav" mode="side">
@@ -28,35 +30,37 @@
                 <input type="checkbox" name="other" [(ngModel)]="otherCheckbox" data-md-icheck (change)="doFilter('Other')">
             </li>
         </ul>
+        <h3>Attending Events:</h3>
+        <mat-card *ngFor="let event of attendedEvents">
+            <h5>{{event}}</h5>
+            <button mat-stroked-button color="warn" (click)="removeAttend()">Remove</button>
+        </mat-card>
     </mat-drawer>
     <h1 style="font-size:5.5vw;">Featured Events</h1>
 <button color="black" mat-raised-button (click)="drawer.toggle()">Filter</button>
 
 <!--Main content feed-->
 <div class='card'>
-<div class='card-body'>
+<div class='card-body' *ngFor='let event of filteredEvents'>
 <div *ngIf='events && events.length'>
-<mat-card class="event-card" *ngFor='let event of filteredEvents'>
+<mat-card class="event-card" *ngIf="!event.hideMe">
 <mat-card-header *ngIf="!event.hideMe">
 <div mat-card-avatar class="event-header-image"></div>
 <mat-card-title><strong>{{event.name}}</strong></mat-card-title>
 <mat-card-subtitle><strong>Venue:</strong>{{event.venue}} - <strong>Time:</strong>{{event.time}} - <strong>Date:</strong>{{event.date}} - <strong>Genre:</strong>{{event.genre}}</mat-card-subtitle>
 </mat-card-header>
-<img *ngIf="!event.hideMe" mat-card-image src="{{event.image}}">
-<mat-card-content *ngIf="!event.hideMe">
-<p>
+<img *ngIf="!event.hideMe" mat-card-image src="{{event.image}}" alt="Photo of a Shiba Inu">
+<mat-card-content>
+<p *ngIf="!event.hideMe">
 {{event.description}}
 </p>
 </mat-card-content>
-<div>
- {{attendees}}
-</div>
 <mat-card-actions *ngIf="!event.hideMe">
-<button (click)="attend(); clicked = true;" [disabled]="clicked"  mat-button style="color: #90ee90">ATTEND</button>
-<button (click)="event.hideMe = !event.hideMe" mat-button style="color:#ff0000">IGNORE</button>
-<button (click)="event.show = !event.show" mat-button style="color: #0b6f8d">LOCATION</button>
+<button mat-button style="color: #90ee90" (click)='attendEvent(event.name)'>ATTEND</button>
+<button  (click)="event.hideMe = !event.hideMe" mat-button style="color:#ff0000">IGNORE</button>
+<button (click)="mapDisplay(event); event.show = !event.show" mat-button style="color: #0b6f8d">LOCATION</button>
 </mat-card-actions>
-<iframe *ngIf="event.show" [src]='sanitizer.bypassSecurityTrustResourceUrl(event.map)' height="400px" width="500px"></iframe>
+<iframe *ngIf="event.show" [src]='sanitizer.bypassSecurityTrustResourceUrl(dangerousUrl)' height="400px" width="500px"></iframe>
 </mat-card>
 </div>
 </div>
